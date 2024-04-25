@@ -24,7 +24,7 @@ const fetchUserDetails = async()=>{
 }
 
   useEffect(()=>{
-//**user Detailss */
+/**user Detailss */
 fetchUserDetails()
 
 

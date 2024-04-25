@@ -1,40 +1,42 @@
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
-async function authToken(req, res,next){
-    try{
-        const token = req.cookies?.token 
-        console.log("token", token)
-        if(!token){
-            return res.json({
-                message : "user not login",
-                error : true,
-                success : false,
-            })
+async function authToken(req, res, next) {
+    
+    try {
+        const token = req.cookies?.token;
+
+        console.log("token -", token);
+
+        if (!token) {
+            return res.status(200).json({
+                message: "User not logged in",
+                error: true,
+                success: false,
+            });
         }
 
-        jwt.verify(token, process.env.TOKEN_SECRET_KEY, function(err, decoded) {
-           console.log(err)
-           console.log("decoded",decoded)
+        // Wrap jwt.verify in a promise
+        const decoded = await new Promise((resolve, reject) => {
+            jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+                if (err) reject(err);
+                resolve(decoded);
+            });
+        });
 
-           if(err){
-            console.log("error auth", err)
-           }
+        console.log("decoded", decoded);
+        req.userId = decoded?._id;
 
-           req.userId = decoded?._id
+        next();
 
-           next()
- 
-          });
-
-      
-    }catch(err){
+    } catch (err) {
+        console.log("Error in auth token:", err);
         res.status(400).json({
-            message: err.message || err,
-            data: [],
+            message: err.message || "Authentication failed",
             error: true,
             success: false,
-        })
+        });
     }
 }
 
-module.exports = authToken
+module.exports = authToken;
+

@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const UserModel = require("../models/userModel");
 const jwt = require('jsonwebtoken');
-const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser"); 
 
 async function userSignInController(req,res){
     try{
@@ -33,15 +33,16 @@ async function userSignInController(req,res){
 
         const tokenOption = {
             httpOnly : true,
-            secure : true
+            secure : false
         }
 
-        res.cookie("token",token,tokenOption).status(200).json({
+        res.cookie("token", token, tokenOption).status(200).json({
             message : "Login successfully",
             data : token,
             success : true,
             error : false
         })
+        cookieParser()
 
        }else{
          throw new Error("Please check Password")
@@ -64,3 +65,14 @@ async function userSignInController(req,res){
 }
 
 module.exports = userSignInController
+
+
+
+
+
+
+
+
+
+
+
